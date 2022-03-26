@@ -1,4 +1,4 @@
-import { Database } from './Database';
+import Database from './Database';
 import Express from './Express';
 
 class App {
@@ -8,7 +8,6 @@ class App {
   public loadServer(): void {
     // Initialize express server
     Express.init();
-    // initialize socket
   }
 
   /**

@@ -1,25 +1,32 @@
 import { Request, Response, NextFunction } from 'express';
-import { validationResult } from 'express-validator';
-import ValidatioError from '../../exceptions/ValidationError';
+import Model from '../../../app/models/model';
 import authService from '../../service/v1/auth.service';
+import APIError from '../../exceptions/APIError';
 
 class Login {
-  public loginHandler = async (
-    req: Request,
-    res: Response,
+  public userSignUp = async (
+    request: Request,
+    response: Response,
     next: NextFunction,
   ) => {
     try {
-      const { email }: { email: string } = req.body;
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        throw new ValidatioError(errors);
+      const { userName, password } = request.body;
+      let user = await Model.userModel.findOne({
+        where: { userName },
+      });
+      if (user) {
+        throw new APIError('User already registered', 400);
       }
-      const response = await authService.login(email);
-      res.status(200).json({
-        success: true,
-        message: 'data fetched successfully',
-        data: response,
+      const { hash, salt } = await authService.encryptKey(password);
+      user = await Model.userModel.create({
+        userName,
+        password: hash,
+        salt,
+      });
+      response.status(200).json({
+        status: 'success',
+        message: 'user signup success',
+        user: user,
       });
     } catch (error) {
       next(error);

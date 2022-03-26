@@ -19,7 +19,7 @@ class Http {
       algorithms: ['HS256'],
     }).unless({ path: [{ url: '/api/v1/user/login', method: ['POST'] }] });
 
-    if (Locals.config().ENVIRONMENT === 'dev') {
+    if (Locals.config().ENVIRONMENT === 'DEV') {
       _express.use(morgan('dev'));
     }
     if (Locals.config().ENVIRONMENT === 'prod') {

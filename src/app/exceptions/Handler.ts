@@ -10,22 +10,20 @@ class Handler {
     res: Response,
     next: NextFunction,
   ): any {
+    console.log(error);
     if (error instanceof APIError) {
       res.status(error.status).json({
-        success: false,
-        errorType: 'APIError',
+        status: 'APIError',
         message: error.message,
       });
     } else if (error instanceof ValidatioError) {
       res.status(error.status).json({
-        success: false,
-        errorType: 'ValidationError',
+        status: 'ValidationError',
         message: error.message,
       });
     } else if (error instanceof UnauthorizedError) {
       res.status(error.status).json({
-        success: false,
-        errorType: 'UnauthorizedError',
+        status: 'UnauthorizedError',
         message: error.message,
       });
     }

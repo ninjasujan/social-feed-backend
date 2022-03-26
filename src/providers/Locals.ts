@@ -18,7 +18,7 @@ class Locals {
    * Make env available throughout your application runtime
    */
   public static config: IConfig = () => {
-    const ENVIRONMENT = process.env.ENVIRONMENT || 'dev';
+    const ENVIRONMENT = process.env.ENVIRONMENT || 'DEV';
     const PORT = process.env.PORT || 4000;
     const API_SECRET =
       process.env.TOKEN_SECRET || 'This is your responsibility!';

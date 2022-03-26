@@ -6,16 +6,9 @@ import httpMiddleware from '../app/middleware/http.middleware';
 import Locals from './Locals';
 
 class Express {
-  /**
-   * Create express object
-   */
   public express: Application;
-
   public server: Server;
 
-  /**
-   * Initialize the express server
-   */
   constructor() {
     this.express = express();
     this.mountMiddlewware();

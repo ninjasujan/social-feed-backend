@@ -1,30 +1,48 @@
-import Sequelize from 'sequelize';
-import Database from '../../providers/Database';
+import Sequelize, { DataTypes, Sequelize as ISequelize } from 'sequelize';
 
-const userModel = Database.sequelize.define(
-  'user',
-  {
-    _id: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
-      autoIncrement: true,
-      primaryKey: true,
-    },
-    userName: {
-      type: Sequelize.STRING(20),
-      allowNull: false,
-      primaryKey: true,
-    },
-    password: {
-      type: Sequelize.STRING,
-      allowNull: false,
-    },
-    salt: {
-      type: Sequelize.STRING,
-      allowNull: false,
-    },
-  },
-  { timestamps: true },
-);
+export interface IUserAttribute {
+  _id?: number;
+  userName: string;
+  password: string;
+  salt: string;
+}
 
-export default userModel;
+export interface IUserCreateAttribute
+  extends Sequelize.Optional<IUserAttribute, '_id'> {}
+
+export interface IUserModel
+  extends Sequelize.Model<IUserAttribute, IUserCreateAttribute>,
+    IUserAttribute {
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+const defineUserModel = (sequelize: ISequelize) => {
+  return sequelize.define<IUserModel>(
+    'user',
+    {
+      _id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+      },
+      userName: {
+        type: DataTypes.STRING(20),
+        allowNull: false,
+        primaryKey: true,
+      },
+      password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      salt: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+    },
+    { timestamps: true, freezeTableName: true },
+  );
+};
+
+export default defineUserModel;

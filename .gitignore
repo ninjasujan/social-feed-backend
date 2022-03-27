@@ -8,6 +8,8 @@ lerna-debug.log*
 
 .env
 src/config
+src/secrets
+src/temp
 
 
 # Diagnostic reports (https://nodejs.org/api/report.html)

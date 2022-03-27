@@ -1,18 +1,17 @@
 import Database from './Database';
 import Express from './Express';
+import Config from './Config';
 
 class App {
-  /**
-   * Load server
-   */
+  /** Load Server */
   public loadServer(): void {
-    // Initialize express server
+    /** Initiate Express server */
     Express.init();
+    /** Initialize configs */
+    Config.init();
   }
 
-  /**
-   * Load Database
-   */
+  /** Load Database */
   public loadDatabase(): void {
     Database.init();
   }

@@ -10,6 +10,9 @@ interface IConfig {
     PASSWORD: string;
     DATABASE_HOST: string;
     DIALECT: Dialect;
+    AWS_ACCESS_KEY: string;
+    AWS_SECRET_KEY: string;
+    AWS_BUCKET_NAME: string;
   };
 }
 
@@ -27,7 +30,9 @@ class Locals {
     const PASSWORD = process.env.PASSWORD || '';
     const DATABASE_HOST = process.env.DATABASE_HOST || '';
     const DIALECT = (process.env.DIALECT as Dialect) || 'postgres';
-
+    const AWS_ACCESS_KEY = process.env.AWS_ACCESS_KEY || '';
+    const AWS_SECRET_KEY = process.env.AWS_SECRET_KEY || '';
+    const AWS_BUCKET_NAME = process.env.AWS_BUCKET_NAME || '';
     return {
       ENVIRONMENT,
       PORT,
@@ -37,6 +42,9 @@ class Locals {
       PASSWORD,
       DATABASE_HOST,
       DIALECT,
+      AWS_ACCESS_KEY,
+      AWS_SECRET_KEY,
+      AWS_BUCKET_NAME,
     };
   };
 }

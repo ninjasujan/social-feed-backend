@@ -18,7 +18,7 @@ export interface IUserModel
 }
 
 const defineUserModel = (sequelize: ISequelize) => {
-  return sequelize.define<IUserModel>(
+  const userModel = sequelize.define<IUserModel>(
     'user',
     {
       _id: {
@@ -30,7 +30,7 @@ const defineUserModel = (sequelize: ISequelize) => {
       userName: {
         type: DataTypes.STRING(20),
         allowNull: false,
-        primaryKey: true,
+        unique: true,
       },
       password: {
         type: DataTypes.STRING,
@@ -43,6 +43,7 @@ const defineUserModel = (sequelize: ISequelize) => {
     },
     { timestamps: true, freezeTableName: true },
   );
+  return userModel;
 };
 
 export default defineUserModel;

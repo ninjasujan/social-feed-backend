@@ -2,31 +2,39 @@ const { DataTypes } = require('sequelize');
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('user', {
+    await queryInterface.createTable('post', {
       _id: {
         type: DataTypes.INTEGER,
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
       },
-      userName: {
-        type: DataTypes.STRING(20),
-        allowNull: false,
-        unique: true,
+      userId: {
+        type: DataTypes.INTEGER,
+        references: {
+          model: 'user',
+          key: '_id',
+        },
+        onDelete: 'RESTRICT',
       },
-      password: {
-        type: DataTypes.STRING,
-        allowNull: false,
+      caption: {
+        type: DataTypes.STRING(500),
+        defaultValue: null,
       },
-      salt: {
+      location: {
         type: DataTypes.STRING,
+        default: null,
+      },
+      resourceUrl: {
+        type: DataTypes.ARRAY(DataTypes.STRING),
         allowNull: false,
       },
       createdAt: DataTypes.DATE,
       updatedAt: DataTypes.DATE,
     });
   },
+
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('user');
+    await queryInterface.dropTable('post');
   },
 };

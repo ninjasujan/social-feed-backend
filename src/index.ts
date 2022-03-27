@@ -1,12 +1,7 @@
 import App from './providers/App';
 
-/**
- * Connecting Database
- */
-
+/** Connecting Database */
 App.loadDatabase();
 
-/**
- * Connecting server
- */
+/** Connecting Server */
 App.loadServer();

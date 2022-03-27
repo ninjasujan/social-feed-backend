@@ -1,8 +1,7 @@
 import { Result } from 'express-validator';
 
 class ValidatioError extends Error {
-  public status: number;
-
+  public status: number = 422;
   constructor(error: Result) {
     super('');
     Object.setPrototypeOf(this, ValidatioError.prototype);

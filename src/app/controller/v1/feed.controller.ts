@@ -55,6 +55,26 @@ class Feeds {
       next(error);
     }
   };
+
+  public getFeeds = async (
+    request: Request,
+    response: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const _id = request.user._id;
+      const feeds = await Model.Post.findAll({
+        where: { userId: _id },
+      });
+      response.status(200).json({
+        status: 'success',
+        message: 'Feeds list',
+        feeds,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export default new Feeds();

@@ -21,4 +21,6 @@ router.post(
   feedController.createFeed,
 );
 
+router.get('/', feedController.getFeeds);
+
 export default router;

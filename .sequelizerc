@@ -1,6 +1,7 @@
 const path = require('path');
 
 module.exports = {
+  config: path.join(__dirname, 'src', 'config', 'config.js'),
   'models-path': path.join(__dirname, 'src', 'app', 'models'),
   'migrations-path': path.join(__dirname, 'src', 'app', 'migration'),
 };

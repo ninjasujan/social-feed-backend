@@ -7,7 +7,7 @@ root = true
 [*]
 end_of_line = lf
 insert_final_newline = true
-tab_width = 1
+tab_width = 4
 
 # Matches multiple files with brace expansion notation
 # Set default charset
@@ -26,7 +26,7 @@ indent_style = tab
 # Indentation override for all JS under lib directory
 [{*.tsx,*.js}]
 indent_style = space
-indent_size = 2
+indent_size = 4
 
 # Matches the exact files either package.json or .travis.yml
 [{package.json,.travis.yml}]

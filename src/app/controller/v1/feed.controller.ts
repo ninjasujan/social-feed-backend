@@ -1,10 +1,16 @@
 import { Request, Response, NextFunction } from 'express';
 import { Op } from 'sequelize';
 import Model from '@feed-models/model';
-import { feedDirectory, feedBaseUrl } from '@feed-constants/feed.constant';
+import {
+    feedDirectory,
+    feedBaseUrl,
+    postType,
+} from '@feed-constants/feed.constant';
 import AuthorizationError from '@feed-exceptions/AuthorizationError';
 import storageService from '@feed-service/v1/storage.service';
 import APIError from '@feed-exceptions/APIError';
+import { IPostModel } from '@feed-models/post.model';
+import { IHashTagModel } from '@feed-models/hashtag.model';
 
 class Feeds {
     public createFeed = async (
@@ -37,7 +43,7 @@ class Feeds {
                 throw new APIError('Please provide valid user tags', 400);
             }
             /** Check for valid hashtag */
-            const hashtagCount = await Model.Post.count({
+            const hashtagCount = await Model.HashTag.count({
                 where: {
                     _id: {
                         [Op.in]: hashTagList,
@@ -66,46 +72,55 @@ class Feeds {
                 );
                 resourceUrl = resourceUrl.map((file: any) => file.cloudPath);
             }
-            /** Create post entry in DB */
-            const postInstance = await Model.Post.create({
-                userId: _id,
-                type,
-                caption,
-                location,
-                resourceUrl,
-            });
-            const post = postInstance.toJSON();
-            /** Create HashTagt */
-            const postHashTag = hashTagList.map((hash) => ({
-                postId: post._id,
-                hashTagId: hash,
-            }));
-            const postUserTag = userTagList.map((user) => ({
-                userId: user,
-                postId: post._id,
-            }));
-            await Model.PostHashTag.bulkCreate(postHashTag);
-            await Model.UserPostTag.bulkCreate(postUserTag);
+            let feed: IHashTagModel | IPostModel;
+            if (type === postType.POST) {
+                const feedInstance = await Model.Post.create({
+                    userId: _id,
+                    caption,
+                    location,
+                    resourceUrl,
+                });
+                feed = feedInstance.toJSON();
+                const postHashTag = hashTagList.map((hash) => ({
+                    postId: feed._id,
+                    hashTagId: Number(hash),
+                }));
+                const userPostTag = userTagList.map((user) => ({
+                    userId: Number(user),
+                    postId: feed._id,
+                }));
+                console.log('[PosT HashTag]', postHashTag);
+                await Model.PostHashTag.bulkCreate(postHashTag);
+                await Model.UserPostTag.bulkCreate(userPostTag);
+            } else {
+                const feedInstance = await Model.HashTag.create({
+                    userId: _id,
+                    caption,
+                    location,
+                    resourceUrl,
+                });
+                feed = feedInstance.toJSON();
+            }
             response.status(200).json({
                 status: 'success',
                 message: 'Post created successfully',
-                post,
+                feed,
             });
         } catch (error) {
             next(error);
         }
     };
 
-    public getFeeds = async (
+    public getUserFeeds = async (
         request: Request,
         response: Response,
         next: NextFunction,
     ) => {
         try {
             const _id = request.user._id;
-            const feeds = await Model.Post.findAll({
-                where: { _id: 2 },
-                include: Model.User,
+            const feeds = await Model.User.findAll({
+                where: { _id },
+                include: Model.Post,
             });
             response.status(200).json({
                 status: 'success',

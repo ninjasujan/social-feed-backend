@@ -18,15 +18,19 @@ router.post(
         body('caption', 'Please provide valid caption').isString().optional(),
         body('location', 'Please provide valid location').isString().optional(),
         body('type', postTypeError).isString().isIn(Object.values(postType)),
-        body('userTag', 'Please provide valid user tag list').isArray({
-            min: 0,
-        }),
-        body('hashTag', 'Please provide valid hash tags list').isArray(),
+        body('userTag', 'Please provide valid user tag list')
+            .isArray({
+                min: 0,
+            })
+            .optional(),
+        body('hashTag', 'Please provide valid hash tags list')
+            .isArray()
+            .optional(),
     ],
     inputValidator,
     feedController.createFeed,
 );
 
-router.get('/', feedController.getFeeds);
+router.get('/', feedController.getUserFeeds);
 
 export default router;

@@ -1,7 +1,6 @@
 import Sequelize, { DataTypes, Sequelize as ISequelize } from 'sequelize';
-import { postType, PostType } from '@feed-constants/feed.constant';
 
-export interface IPostAttribute {
+export interface IHashTagAttribute {
     _id: number;
     userId: number;
     caption: string;
@@ -9,19 +8,19 @@ export interface IPostAttribute {
     resourceUrl: Array<string>;
 }
 
-export interface IPostCreateAttribute
-    extends Sequelize.Optional<IPostAttribute, '_id'> {}
+export interface IHashTagCreateAttribute
+    extends Sequelize.Optional<IHashTagAttribute, '_id'> {}
 
-export interface IPostModel
-    extends Sequelize.Model<IPostAttribute, IPostCreateAttribute>,
-        IPostAttribute {
+export interface IHashTagModel
+    extends Sequelize.Model<IHashTagAttribute, IHashTagCreateAttribute>,
+        IHashTagAttribute {
     createdAt?: Date;
     updatedAt?: Date;
 }
 
-const definePostModel = (sequelize: ISequelize) => {
-    return sequelize.define<IPostModel>(
-        'post',
+const defineHashTagModel = (sequelize: ISequelize) => {
+    return sequelize.define<IHashTagModel>(
+        'hashtag',
         {
             _id: {
                 type: DataTypes.INTEGER,
@@ -54,4 +53,4 @@ const definePostModel = (sequelize: ISequelize) => {
     );
 };
 
-export default definePostModel;
+export default defineHashTagModel;

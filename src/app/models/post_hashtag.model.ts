@@ -1,23 +1,23 @@
 import Sequelize, { DataTypes, Sequelize as ISequelize } from 'sequelize';
 
-export interface IHashTagAttribute {
+export interface IPostHashTagAttribute {
     _id: number;
     postId: number;
     hashTagId: number;
 }
 
-export interface IHashTagCreateAttribute
-    extends Sequelize.Optional<IHashTagAttribute, '_id'> {}
+export interface IPostHashTagCreateAttribute
+    extends Sequelize.Optional<IPostHashTagAttribute, '_id'> {}
 
-export interface IHashTagModel
-    extends Sequelize.Model<IHashTagAttribute, IHashTagCreateAttribute>,
-        IHashTagAttribute {
+export interface IPostHashTagModel
+    extends Sequelize.Model<IPostHashTagAttribute, IPostHashTagCreateAttribute>,
+        IPostHashTagAttribute {
     createdAt?: Date;
     updatedAt?: Date;
 }
 
-const defineHashTagModel = (sequelize: ISequelize) => {
-    return sequelize.define<IHashTagModel>(
+const definePostHashTagModel = (sequelize: ISequelize) => {
+    return sequelize.define<IPostHashTagModel>(
         'post_hashtag',
         {
             _id: {
@@ -33,18 +33,20 @@ const defineHashTagModel = (sequelize: ISequelize) => {
                     key: '_id',
                 },
                 onDelete: 'CASCADE',
+                primaryKey: true,
             },
             hashTagId: {
                 type: DataTypes.INTEGER,
                 references: {
-                    model: 'post',
+                    model: 'hashtag',
                     key: '_id',
                 },
                 onDelete: 'CASCADE',
+                primaryKey: true,
             },
         },
         { timestamps: true, freezeTableName: true },
     );
 };
 
-export default defineHashTagModel;
+export default definePostHashTagModel;

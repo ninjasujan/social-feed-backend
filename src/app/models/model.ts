@@ -13,6 +13,11 @@ import {
     IPostHashTagCreateAttribute,
     IPostHashTagModel,
 } from '@feed-models/post_hashtag.model';
+import {
+    ILikeAttributes,
+    ILikeCreateAttribute,
+} from '@feed-models/likes.model';
+import { ICommentCreateAttribute, ICommentModel } from './comment.model';
 
 class Model {
     public static User: Sequelize.ModelStatic<
@@ -30,12 +35,20 @@ class Model {
     public static PostHashTag: Sequelize.ModelStatic<
         Sequelize.Model<IPostHashTagModel, IPostHashTagCreateAttribute>
     >;
+    public static Likes: Sequelize.ModelStatic<
+        Sequelize.Model<ILikeAttributes, ILikeCreateAttribute>
+    >;
+    public static Comment: Sequelize.ModelStatic<
+        Sequelize.Model<ICommentModel, ICommentCreateAttribute>
+    >;
     public static init(sequelize: ISequelize) {
         Model.User = sequelize.models.user;
         Model.Post = sequelize.models.post;
         Model.HashTag = sequelize.models.hashtag;
         Model.UserPostTag = sequelize.models.post_usertag;
         Model.PostHashTag = sequelize.models.post_hashtag;
+        Model.Likes = sequelize.models.likes;
+        Model.Comment = sequelize.models.comment;
     }
 }
 

@@ -12,6 +12,9 @@ import APIError from '@feed-exceptions/APIError';
 import { IPostModel } from '@feed-models/post.model';
 import { IHashTagModel } from '@feed-models/hashtag.model';
 
+/**
+ * Feeds Class
+ */
 class Feeds {
     public createFeed = async (
         request: Request,
@@ -89,7 +92,6 @@ class Feeds {
                     userId: Number(user),
                     postId: feed._id,
                 }));
-                console.log('[PosT HashTag]', postHashTag);
                 await Model.PostHashTag.bulkCreate(postHashTag);
                 await Model.UserPostTag.bulkCreate(userPostTag);
             } else {
@@ -118,14 +120,31 @@ class Feeds {
     ) => {
         try {
             const _id = request.user._id;
-            const feeds = await Model.User.findAll({
-                where: { _id },
-                include: Model.Post,
+            const feeds = await Model.Post.findAll({
+                where: { userId: _id },
             });
+            const posts = [];
+            for (let i = 0; i < feeds.length; i++) {
+                const feed = feeds[i].toJSON();
+                const likes = await Model.Likes.count({
+                    where: { postId: feed._id },
+                });
+                /** Manny to many relation query */
+                const userTags = await Model.UserPostTag.findAll({
+                    where: { postId: feed._id },
+                    include: [
+                        {
+                            model: Model.User,
+                            attributes: ['userName', 'profileImage', '_id'],
+                        },
+                    ],
+                });
+                posts.push({ ...feed, likes, userTags });
+            }
             response.status(200).json({
                 status: 'success',
                 message: 'Feeds list',
-                feeds,
+                posts,
             });
         } catch (error) {
             next(error);

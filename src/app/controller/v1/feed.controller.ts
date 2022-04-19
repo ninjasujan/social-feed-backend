@@ -113,38 +113,122 @@ class Feeds {
         }
     };
 
-    public getUserFeeds = async (
+    public getUsersFeeds = async (
         request: Request,
         response: Response,
         next: NextFunction,
     ) => {
         try {
-            const _id = request.user._id;
-            const feeds = await Model.Post.findAll({
-                where: { userId: _id },
+            const { userIds } = request.body;
+            const userFeeds: any = await Model.User.findAll({
+                where: {
+                    _id: {
+                        [Op.in]: userIds,
+                    },
+                },
+                attributes: {
+                    exclude: ['password', 'salt'],
+                },
+                include: [
+                    {
+                        model: Model.Post,
+                        as: 'userPost',
+                    },
+                ],
             });
-            const posts = [];
-            for (let i = 0; i < feeds.length; i++) {
-                const feed = feeds[i].toJSON();
-                const likes = await Model.Likes.count({
-                    where: { postId: feed._id },
-                });
-                /** Manny to many relation query */
-                const userTags = await Model.UserPostTag.findAll({
-                    where: { postId: feed._id },
-                    include: [
-                        {
-                            model: Model.User,
-                            attributes: ['userName', 'profileImage', '_id'],
-                        },
-                    ],
-                });
-                posts.push({ ...feed, likes, userTags });
+            const updatedUsersFeed = [];
+            for (let i = 0; i < userFeeds.length; i++) {
+                const userFeed = userFeeds[i].toJSON();
+                for (let i = 0; i < userFeed?.userPost?.length; i++) {
+                    const like = await Model.Likes.count({
+                        where: { postId: userFeed.userPost[i]._id },
+                    });
+                    // const userTags = await Model.Post.findAll({
+                    //     where: {
+                    //         _id: userFeed._id,
+                    //     },
+                    //     include: {
+                    //         model: Model.User,
+                    //         as: 'post_usertag_user',
+                    //     },
+                    // });
+                    userFeed.userPost[i].like = like;
+                    // userFeed.userPost[i].userTags = userTags;
+                }
+                updatedUsersFeed.push(userFeed);
             }
             response.status(200).json({
                 status: 'success',
                 message: 'Feeds list',
-                posts,
+                userFeeds: updatedUsersFeed,
+            });
+        } catch (error) {
+            next(error);
+        }
+    };
+
+    public getUserFeed = async (
+        request: Request,
+        response: Response,
+        next: NextFunction,
+    ) => {
+        try {
+            const { postId } = request.params;
+            const post = await Model.Post.findOne({
+                where: {
+                    _id: postId,
+                },
+                include: [
+                    {
+                        model: Model.User,
+                        as: 'creator',
+                        attributes: {
+                            exclude: [
+                                'password',
+                                'salt',
+                                'createdAt',
+                                'updatedAt',
+                            ],
+                        },
+                    },
+                    {
+                        model: Model.HashTag,
+                        as: 'hashtags',
+                    },
+                ],
+            });
+            response.status(200).json({
+                status: 'success',
+                message: 'User post information',
+                post,
+            });
+        } catch (error) {
+            next(error);
+        }
+    };
+
+    public getPostByHashTag = async (
+        request: Request,
+        response: Response,
+        next: NextFunction,
+    ) => {
+        try {
+            const { hashTag } = request.params;
+            const posts = await Model.HashTag.findOne({
+                where: {
+                    _id: hashTag,
+                },
+                include: [
+                    {
+                        model: Model.Post,
+                        as: 'posts',
+                    },
+                ],
+            });
+            response.status(200).json({
+                status: 'success',
+                message: 'Post tagged with hashtag',
+                hashTag: posts,
             });
         } catch (error) {
             next(error);

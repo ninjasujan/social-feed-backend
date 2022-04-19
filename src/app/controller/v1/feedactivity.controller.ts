@@ -52,17 +52,26 @@ class FeedActivity {
             if (!post) {
                 throw new APIError('Please provide valid post id', 400);
             }
-            const users = await Model.Likes.findAll({
-                where: { postId: post._id },
+            const users = await Model.Post.findOne({
+                where: { _id: post._id },
                 include: {
                     model: Model.User,
-                    attributes: ['_id', 'userName', 'profileImage'],
+                    as: 'likedUser',
+                    attributes: {
+                        exclude: [
+                            'password',
+                            'salt',
+                            'createdAt',
+                            'updatedAt',
+                            'likes',
+                        ],
+                    },
                 },
             });
             return response.status(200).json({
                 status: 'success',
                 message: 'User list',
-                users,
+                post: users,
             });
         } catch (error) {
             next(error);
@@ -124,7 +133,7 @@ class FeedActivity {
                     {
                         model: Model.User,
                         attributes: ['userName', 'profileImage', '_id'],
-                        nested: true,
+                        as: 'user',
                     },
                 ],
             });
@@ -141,6 +150,32 @@ class FeedActivity {
                 message: 'Comment found.',
                 comments: commentList,
             });
+        } catch (error) {
+            next(error);
+        }
+    };
+
+    public testApiRoute = async (
+        request: Request,
+        response: Response,
+        next: NextFunction,
+    ) => {
+        try {
+            const _id = Number(request.user._id);
+            const comments = await Model.Post.findAll({
+                include: [
+                    {
+                        model: Model.User,
+                        as: 'postComments',
+                        required: false,
+                        attributes: ['_id', 'userName'],
+                        through: {
+                            as: 'comment',
+                        },
+                    },
+                ],
+            });
+            response.status(200).json(comments);
         } catch (error) {
             next(error);
         }

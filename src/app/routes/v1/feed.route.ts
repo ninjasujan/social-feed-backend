@@ -1,10 +1,11 @@
 import express, { Router } from 'express';
-import { body } from 'express-validator';
+import { body, param } from 'express-validator';
 import multer from 'multer';
 import path from 'path';
 import inputValidator from '@feed-middleware/validation.middleware';
 import feedController from '@feed-controller/v1/feed.controller';
 import { postType, postTypeError } from '@feed-constants/feed.constant';
+import feedactivityController from '@feed-controller/v1/feedactivity.controller';
 
 const tempFilePath = path.join(__dirname, '..', '..', '..', 'temp');
 const uploadstrategy = multer({ dest: tempFilePath });
@@ -31,6 +32,26 @@ router.post(
     feedController.createFeed,
 );
 
-router.get('/', feedController.getUserFeeds);
+router.get(
+    '/:postId',
+    [body('userIds', "Please provide valid user ID's").isArray({ min: 1 })],
+    inputValidator,
+    feedController.getUserFeed,
+);
+
+router.post(
+    '/',
+    [body('userIds', "Please provide valid user ID's").isArray({ min: 1 })],
+    inputValidator,
+    feedController.getUsersFeeds,
+);
+
+router.get('/hashtag/:hashTag', [
+    param('hashTag', 'Please provide valid hashtag').notEmpty(),
+    inputValidator,
+    feedController.getPostByHashTag,
+]);
+
+// router.get('/test', feedactivityController.testApiRoute);
 
 export default router;

@@ -27,6 +27,7 @@ class Http {
                 path: [
                     { url: '/api/v1/auth/login', method: ['POST'] },
                     { url: '/api/v1/auth/signup', method: ['POST'] },
+                    // { url: '/api/v1/feed/test', method: ['GET'] },
                 ],
             }),
         );

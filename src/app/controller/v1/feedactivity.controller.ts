@@ -129,6 +129,8 @@ class FeedActivity {
             }
             const comments = await Model.Comment.findAll({
                 where: { postId, parentComment: { [Op.eq]: null } },
+                limit: 10,
+                offset: 0,
                 include: [
                     {
                         model: Model.User,

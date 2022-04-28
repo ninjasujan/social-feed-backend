@@ -143,17 +143,27 @@ class Feeds {
                     const like = await Model.Likes.count({
                         where: { postId: userFeed.userPost[i]._id },
                     });
-                    // const userTags = await Model.Post.findAll({
-                    //     where: {
-                    //         _id: userFeed._id,
-                    //     },
-                    //     include: {
-                    //         model: Model.User,
-                    //         as: 'post_usertag_user',
-                    //     },
-                    // });
                     userFeed.userPost[i].like = like;
-                    // userFeed.userPost[i].userTags = userTags;
+                    const users = await Model.UserPostTag.findAll({
+                        where: { postId: userFeed.userPost[i]._id },
+                        include: {
+                            model: Model.User,
+                            as: 'post_usertag_user',
+                            attributes: {
+                                exclude: [
+                                    'password',
+                                    'salt',
+                                    'createdAt',
+                                    'updatedAt',
+                                ],
+                            },
+                        },
+                    });
+                    if (users.length) {
+                        userFeed.userPost[i].taggedUser = users.map(
+                            (user: any) => user?.post_usertag_user,
+                        );
+                    }
                 }
                 updatedUsersFeed.push(userFeed);
             }

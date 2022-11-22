@@ -1,12 +1,4 @@
-# nodejs-folder-structure
-
-**This repository contains the nodejs folder structure for handling large
-project.**
-
-**You can clone this repository for your next nodejs project as a boilerplate
-code**
-
-**Steps to be followed in making Typescript and Nodejs project setup**
+## Social Feed Backend
 
 1. Install Typescript as a global dependency in your system.
 2. Initialize the project with typescript tsc --init
